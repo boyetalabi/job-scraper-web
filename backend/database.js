@@ -1,5 +1,3 @@
-const sqlite3 = require('sqlite3').verbose();
-const { open } = require('sqlite');
 const path = require('path');
 const { Pool } = require('pg');
 
@@ -62,6 +60,8 @@ async function getDb() {
     });
     dbInstance = new DbWrapper(pool);
   } else {
+    const sqlite3 = require('sqlite3').verbose();
+    const { open } = require('sqlite');
     const sqliteDb = await open({
       filename: path.join(__dirname, 'database.sqlite'),
       driver: sqlite3.Database
