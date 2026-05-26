@@ -66,6 +66,11 @@ async function scrapeJobs(config) {
             if (jobDate < cutoffDate) {
               return; // Skip this job
             }
+
+            // Ensure exact string match in title (case-insensitive)
+            if (!source.title.toLowerCase().includes(criteria.toLowerCase())) {
+              return; // Skip fuzzy matches returned by the portal
+            }
             
             allJobs.push({
               id: source.documentId,
