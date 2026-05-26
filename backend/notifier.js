@@ -47,8 +47,10 @@ async function sendNotification(newJobs, config) {
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log(`Notification email sent: ${info.messageId}`);
+    return true;
   } catch (error) {
     console.error('Error sending email:', error.message);
+    throw error;
   }
 }
 
