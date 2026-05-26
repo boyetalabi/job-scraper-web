@@ -132,6 +132,17 @@ app.get('/api/jobs', async (req, res) => {
   res.json(jobs);
 });
 
+app.get('/api/test-scrape', async (req, res) => {
+  try {
+    const db = await getDb();
+    const config = await db.get('SELECT * FROM config WHERE id = 1');
+    const jobs = await scrapeJobs(config);
+    res.json({ success: true, count: jobs.length, jobs });
+  } catch (error) {
+    res.json({ success: false, error: error.message, stack: error.stack });
+  }
+});
+
 const path = require('path');
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
