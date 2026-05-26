@@ -15,10 +15,27 @@ class DbWrapper {
     return sql.replace(/\?/g, () => `$${count++}`);
   }
 
+  _mapRow(row) {
+    if (!row || !usePg) return row;
+    const mapped = {};
+    for (const key in row) {
+      if (key === 'searchcriteria') mapped.searchCriteria = row[key];
+      else if (key === 'notificationemails') mapped.notificationEmails = row[key];
+      else if (key === 'frequencyminutes') mapped.frequencyMinutes = row[key];
+      else if (key === 'targeturls') mapped.targetUrls = row[key];
+      else if (key === 'maxdaysold') mapped.maxDaysOld = row[key];
+      else if (key === 'dateposted') mapped.datePosted = row[key];
+      else if (key === 'matchedcriteria') mapped.matchedCriteria = row[key];
+      else if (key === 'seenat') mapped.seenAt = row[key];
+      else mapped[key] = row[key];
+    }
+    return mapped;
+  }
+
   async get(sql, params = []) {
     if (usePg) {
       const res = await this.db.query(this._convertSql(sql), params);
-      return res.rows[0];
+      return this._mapRow(res.rows[0]);
     } else {
       return this.db.get(sql, params);
     }
@@ -27,7 +44,7 @@ class DbWrapper {
   async all(sql, params = []) {
     if (usePg) {
       const res = await this.db.query(this._convertSql(sql), params);
-      return res.rows;
+      return res.rows.map(r => this._mapRow(r));
     } else {
       return this.db.all(sql, params);
     }
