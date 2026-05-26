@@ -143,6 +143,22 @@ app.get('/api/test-scrape', async (req, res) => {
   }
 });
 
+app.get('/api/test-email', async (req, res) => {
+  try {
+    const db = await getDb();
+    const config = await db.get('SELECT * FROM config WHERE id = 1');
+    const testJob = [{
+      id: 'test_123', title: 'Test Email Job', location: 'Test Location',
+      type: 'Full-Time', datePosted: new Date().toISOString(),
+      url: 'https://example.com', matchedCriteria: 'Test'
+    }];
+    await sendNotification(testJob, config);
+    res.json({ success: true, message: 'Test email requested! Check your inbox/spam folder.' });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
 const path = require('path');
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
