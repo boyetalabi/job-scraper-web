@@ -38,12 +38,8 @@ async function runJobCheck() {
     }
 
     if (newJobs.length > 0) {
-      if (isFirstRun) {
-        console.log(`Initial seed: Found ${newJobs.length} jobs. Saving to database without emailing.`);
-      } else {
-        console.log(`Found ${newJobs.length} new jobs! Sending notification...`);
-        await sendNotification(newJobs, config);
-      }
+      console.log(`Found ${newJobs.length} new jobs! Sending notification...`);
+      await sendNotification(newJobs, config);
     } else {
       console.log('No new jobs found.');
     }
