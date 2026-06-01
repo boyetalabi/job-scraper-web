@@ -12,6 +12,7 @@ function App() {
     maxDaysOld: 7
   });
   const [saving, setSaving] = useState(false);
+  const [testingEmail, setTestingEmail] = useState(false);
 
   useEffect(() => {
     fetchStatus();
@@ -82,6 +83,23 @@ function App() {
       alert('Failed to save configuration');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleTestEmail = async () => {
+    setTestingEmail(true);
+    try {
+      const res = await fetch('/api/test-email');
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+      } else {
+        alert('EMAIL ERROR:\\n' + data.error);
+      }
+    } catch (e) {
+      alert('Failed to connect to server for test email.');
+    } finally {
+      setTestingEmail(false);
     }
   };
 
@@ -183,9 +201,14 @@ function App() {
                 required
               />
             </div>
-            <button type="submit" className="btn-primary" disabled={saving}>
-              <Save size={18} /> {saving ? 'Saving...' : 'Save Configuration'}
-            </button>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button type="submit" className="btn-primary" disabled={saving} style={{ flex: 1 }}>
+                <Save size={18} /> {saving ? 'Saving...' : 'Save Configuration'}
+              </button>
+              <button type="button" className="btn-secondary" onClick={handleTestEmail} disabled={testingEmail} style={{ flex: 1, backgroundColor: 'var(--surface-hover)', color: 'var(--text-primary)' }}>
+                {testingEmail ? 'Testing...' : 'Test Email Settings'}
+              </button>
+            </div>
           </form>
         </div>
       </aside>
